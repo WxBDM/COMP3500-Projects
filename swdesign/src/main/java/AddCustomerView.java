@@ -17,10 +17,10 @@ public class AddCustomerView extends JFrame {
         this.setSize(600, 400);
         this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
 
-        String[] labels = {"ProductID ", "Name ", "Price ", "Quantity "};
+        String[] labels = {"CustomerId ", "Name ", "Price ", "Quantity "};
 
         JPanel line1 = new JPanel(new FlowLayout());
-        line1.add(new JLabel("Customer ID: "));
+        line1.add(new JLabel("ID: "));
         line1.add(txtID);
         this.getContentPane().add(line1);
 

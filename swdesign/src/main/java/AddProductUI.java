@@ -110,9 +110,13 @@ public class AddProductUI {
 
             switch (StoreManager.getInstance().getDataAdapter().saveProduct(product)) {
                 case SQLiteDataAdapter.PRODUCT_DUPLICATE_ERROR:
-                    JOptionPane.showMessageDialog(null, "Product NOT added successfully! Duplicate product ID!");
+                    JOptionPane.showMessageDialog(null, "Unsuccessfully added product. Duplicate product ID.");
+                    return;
+                case SQLiteDataAdapter.PRODUCT_SAVED_OK:
+                    JOptionPane.showMessageDialog(null, "Product added successfully!\n" + product.to_string());
+                    return;
                 default:
-                    JOptionPane.showMessageDialog(null, "Product added successfully: " + product.to_string());
+                    return;
             }
         }
     }

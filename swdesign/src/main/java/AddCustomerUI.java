@@ -132,7 +132,7 @@ public class AddCustomerUI {
                 case SQLiteDataAdapter.PRODUCT_DUPLICATE_ERROR:
                     JOptionPane.showMessageDialog(null, "Customer NOT added successfully! Duplicate customer ID!");
                 default:
-                    JOptionPane.showMessageDialog(null, "Customer added successfully!" + customer.mName);
+                    JOptionPane.showMessageDialog(null, "Customer added successfully!\n" + customer.to_string());
             }
         }
     }

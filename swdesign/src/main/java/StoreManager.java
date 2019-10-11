@@ -46,8 +46,6 @@ public class StoreManager {
     }
 
     public static void main(String[] args) {
-        System.out.println("Hello class!");
-//        StoreManager.getInstance().init();
         StoreManager.getInstance().run();
     }
 

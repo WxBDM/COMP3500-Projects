@@ -64,8 +64,7 @@ public class SQLiteDataAdapter implements IDataAdapter {
 
     public int saveProduct(ProductModel product) {
         try {
-            String sql = "INSERT INTO Products(ProductId, Name, Price, Quantity) VALUES " + product;
-            System.out.println(sql);
+            String sql = "INSERT INTO Products(ProductId, Name, Price, Quantity) VALUES " + product.insert_into_sql();
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
 
@@ -75,7 +74,6 @@ public class SQLiteDataAdapter implements IDataAdapter {
             if (msg.contains("UNIQUE constraint failed"))
                 return PRODUCT_DUPLICATE_ERROR;
         }
-
         return PRODUCT_SAVED_OK;
     }
 

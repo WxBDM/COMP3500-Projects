@@ -280,7 +280,7 @@ public class AddPurchaseUI {
                     sb.appendHeader("Thank you for your purchase! Here is your receipt:");
                     sb.appendPurchase(purchase);
                     System.out.println(sb.to_string());
-                    JOptionPane.showMessageDialog(null, "Purchase added successfully!" + purchase);
+                    JOptionPane.showMessageDialog(null, "Purchase added successfully!\n" + purchase.to_string());
             }
         }
     }

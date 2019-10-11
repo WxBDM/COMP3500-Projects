@@ -43,12 +43,6 @@ public class AddProductView extends JFrame {
         panelButtons.add(btnCancel);
         this.getContentPane().add(panelButtons);
 
-//Lay out the panel.
-//        SpringUtilities.makeCompactGrid(p,
-//                numPairs, 2, //rows, cols
-//                6, 6,        //initX, initY
-//                6, 6);       //xPad, yPad
-
     }
 
 }
