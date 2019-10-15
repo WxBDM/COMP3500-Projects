@@ -269,18 +269,23 @@ public class AddPurchaseUI {
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "PurchaseID is invalid!");
                 return;
+
             }
 
 
             switch (StoreManager.getInstance().getDataAdapter().savePurchase(purchase)) {
                 case SQLiteDataAdapter.PURCHASE_DUPLICATE_ERROR:
                     JOptionPane.showMessageDialog(null, "Purchase NOT added successfully! Duplicate product ID!");
-                default:
+                    return;
+                case SQLiteDataAdapter.PURCHASE_SAVED_OK:
                     TXTReceiptBuilder sb = new TXTReceiptBuilder();
                     sb.appendHeader("Thank you for your purchase! Here is your receipt:");
                     sb.appendPurchase(purchase);
                     System.out.println(sb.to_string());
                     JOptionPane.showMessageDialog(null, "Purchase added successfully!\n" + purchase.to_string());
+                    return;
+                default:
+                    return;
             }
         }
     }

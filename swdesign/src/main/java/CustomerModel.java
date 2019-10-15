@@ -15,4 +15,14 @@ public class CustomerModel {
         sb.append("\tCustomer Payment Info: ").append(mPaymentInfo).append("\n");
         return sb.toString();
     }
+
+    public String insert_into_sql() {
+        StringBuilder sb = new StringBuilder("(");
+        sb.append(mCustomerID).append(", ");
+        sb.append("\"").append(mName).append("\",");
+        sb.append("\"").append(mAddress).append("\",");
+        sb.append(mPhone).append(", ");
+        sb.append("\"").append(mPaymentInfo).append("\");");
+        return sb.toString();
+    }
 }

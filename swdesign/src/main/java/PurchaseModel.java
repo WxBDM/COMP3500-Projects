@@ -17,6 +17,19 @@ public class PurchaseModel {
         return sb.toString();
     }
 
+    public String insert_into_sql() {
+        StringBuilder sb = new StringBuilder("(");
+        sb.append(mPurchaseID).append(", ");
+        sb.append(mCustomerID).append(", ");
+        sb.append(mProductID).append(", ");
+        sb.append(mPrice).append(", ");
+        sb.append(mQuantity).append(", ");
+        sb.append(mCost).append(", ");
+        sb.append(mTax).append(", ");
+        sb.append(mTotal).append(", \"");
+        sb.append(mDate).append("\")");
+        return sb.toString();
+    }
 }
 
 

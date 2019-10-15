@@ -66,7 +66,7 @@ public class AddCustomerUI {
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "You click on Cancel button.");
+                view.dispose();
             }
         });
     }
@@ -129,10 +129,14 @@ public class AddCustomerUI {
             customer.mPaymentInfo = payment; // checks are complete - add the customer address to the object
 
             switch (StoreManager.getInstance().getDataAdapter().saveCustomer(customer)) {
-                case SQLiteDataAdapter.PRODUCT_DUPLICATE_ERROR:
-                    JOptionPane.showMessageDialog(null, "Customer NOT added successfully! Duplicate customer ID!");
-                default:
+                case SQLiteDataAdapter.CUSTOMER_DUPLICATE_ERROR:
+                    JOptionPane.showMessageDialog(null, "Unsuccessful customer add. Duplicate customer ID.");
+                    return;
+                case SQLiteDataAdapter.CUSTOMER_SAVED_OK:
                     JOptionPane.showMessageDialog(null, "Customer added successfully!\n" + customer.to_string());
+                    return;
+                default:
+                    return;
             }
         }
     }
