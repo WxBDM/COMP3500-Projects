@@ -20,7 +20,7 @@ public class SQLiteDataAdapter implements IDataAdapter {
     public int connect(String dbfile) {
         try {
             // db parameters
-            String url = "jdbc:sqlite:" + dbfile;
+            String url = "jdbc:sqlite:data/" + dbfile;
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             // In order to get the connection correct, see the first solution:
