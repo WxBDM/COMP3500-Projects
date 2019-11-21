@@ -1,3 +1,4 @@
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -7,24 +8,14 @@ import java.sql.SQLException;
 
 public class SQLiteDataAdapter implements IDataAdapter {
 
-    public static final int PRODUCT_DUPLICATE_ERROR = 1;
-    public static final int CUSTOMER_DUPLICATE_ERROR = 1;
-    public static final int PURCHASE_DUPLICATE_ERROR = 1;
-
-    public static final int PRODUCT_SAVED_OK = 0;
-    public static final int CUSTOMER_SAVED_OK = 0;
-    public static final int PURCHASE_SAVED_OK = 0;
-
     Connection conn = null;
 
     public int connect(String dbfile) {
         try {
             // db parameters
-            String url = "jdbc:sqlite:data/" + dbfile;
+            String url = "jdbc:sqlite:" + dbfile;
             // create a connection to the database
             conn = DriverManager.getConnection(url);
-            // In order to get the connection correct, see the first solution:
-            // https://stackoverflow.com/questions/43161060/java-sqlite-connection-no-suitable-driver-found-for-jdbcsqlitemain-db
 
             System.out.println("Connection to SQLite has been established.");
 
@@ -46,27 +37,135 @@ public class SQLiteDataAdapter implements IDataAdapter {
         return CONNECTION_CLOSE_OK;
     }
 
+    public ProductModel loadProduct(int productID) {
+        ProductModel product = null;
+
+        try {
+            String sql = "SELECT ProductID, Name, Price, Quantity FROM Products WHERE ProductID = " + productID;
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                product = new ProductModel();
+                product.mProductID = rs.getInt("ProductId");
+                product.mName = rs.getString("Name");
+                product.mPrice = rs.getDouble("Price");
+                product.mQuantity = rs.getDouble("Quantity");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return product;
+    }
+
     public int saveProduct(ProductModel product) {
         try {
-            String sql = "INSERT INTO Products(ProductId, Name, Price, Quantity) VALUES " + product.insert_into_sql();
             Statement stmt = conn.createStatement();
+            ProductModel p = loadProduct(product.mProductID);
+            if( p != null){
+                stmt.executeUpdate("DELETE FROM Products WHERE ProductId =" + product.mProductID);
+            }
+            String sql = "INSERT INTO Products(ProductId, Name, Price, Quantity) VALUES " + product;
+            System.out.println(sql);
+
             stmt.executeUpdate(sql);
 
         } catch (Exception e) {
             String msg = e.getMessage();
             System.out.println(msg);
             if (msg.contains("UNIQUE constraint failed"))
-                return PRODUCT_DUPLICATE_ERROR;
+                return PRODUCT_SAVE_FAILED;
         }
-        return PRODUCT_SAVED_OK;
+
+        return PRODUCT_SAVE_OK;
     }
 
+    public CustomerModel loadCustomer(int customerID) {
+        CustomerModel customer = null;
+
+        try {
+            String sql = "SELECT CustomerId, Name, Phone, Payment Info FROM Customer WHERE CustomerId = " + customerID;
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                customer = new CustomerModel();
+                customer.mCustomerID = rs.getInt("CustomerId");
+                customer.mName = rs.getString("Name");
+                customer.mPaymentMethod = rs.getString("Payment Info");
+                customer.mPhoneNumber = rs.getString("Phone");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return customer;
+    }
+
+    public int saveCustomer(CustomerModel customer) {
+        try {
+            Statement stmt = conn.createStatement();
+            CustomerModel c = loadCustomer(customer.mCustomerID);
+            if( c != null){
+                stmt.executeUpdate("DELETE FROM Customer WHERE CustomerId =" + customer.mCustomerID);
+            }
+            String sql = "INSERT INTO Customer(CustomerId, Name, Phone, Payment Info) VALUES " + customer;
+            System.out.println(sql);
+
+            stmt.executeUpdate(sql);
+
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            System.out.println(msg);
+            if (msg.contains("UNIQUE constraint failed"))
+                return CUSTOMER_SAVE_FAILED;
+        }
+
+        return CUSTOMER_SAVE_OK;
+    }
+
+    @Override
+    public PurchaseModel loadPurchase(int id) {
+        PurchaseModel purchase = null;
+
+        try {
+            String sql = "SELECT PurchaseId, CustomerId, ProductId, Price, Quantity, Cost, Tax, Total, Date FROM Purchases WHERE PurchaseID = " + id;
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                purchase = new PurchaseModel();
+                purchase.mPurchaseID = rs.getInt("PurchaseId");
+                purchase.mCustomerID = rs.getInt("CustomerId");
+                purchase.mProductID = rs.getInt("ProductId");
+                purchase.mPrice = rs.getDouble("Price");
+                purchase.mQuantity = rs.getDouble("Quantity");
+                purchase.mCost = rs.getDouble("Cost");
+                purchase.mTax = rs.getDouble("Tax");
+                purchase.mTotal = rs.getDouble("Total");
+                purchase.mDate = rs.getString("Date");
+
+
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return purchase;
+    }
+    @Override
     public int savePurchase(PurchaseModel purchase) {
         try {
-            String sql = "INSERT INTO Purchases(PurchaseId, CustomerId, ProductId, Price, Quantity, Cost, Tax, Total, Date) VALUES " + purchase.insert_into_sql();
-            System.out.println(sql);
             Statement stmt = conn.createStatement();
+            PurchaseModel p = loadPurchase(purchase.mPurchaseID);
+            if( p != null){
+                stmt.executeUpdate("DELETE FROM Purchases WHERE PurchaseId =" + purchase.mPurchaseID);
+            }
+            String sql = "INSERT INTO Purchases(PurchaseId, CustomerId, ProductId, Price, Quantity, Cost, Tax, Total, Date) VALUES " + purchase;
+            System.out.println(sql);
+
             stmt.executeUpdate(sql);
+//        try {
+//            String sql = "INSERT INTO Purchases(PurchaseID, CustomerID, ProductID, Price, Quantity, Cost, Tax, Total, Date) VALUES " + purchase;
+//            System.out.println(sql);
+//            Statement stmt = conn.createStatement();
+//            stmt.executeUpdate(sql);
 
         } catch (Exception e) {
             String msg = e.getMessage();
@@ -76,62 +175,10 @@ public class SQLiteDataAdapter implements IDataAdapter {
         }
 
         return PURCHASE_SAVED_OK;
+
     }
 
-    public int saveCustomer(CustomerModel customer) {
-        try {
-            String sql = "INSERT INTO Customer VALUES " + customer.insert_into_sql();
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
 
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            if (msg.contains("UNIQUE constraint failed"))
-                return CUSTOMER_DUPLICATE_ERROR;
-        }
-        return CUSTOMER_SAVED_OK;
-    }
 
-    public ProductModel loadProduct(int productID) {
-        ProductModel product = null;
 
-        try {
-            String sql = "SELECT ProductId, Name, Price, Quantity FROM Products WHERE ProductId = " + productID;
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            if (rs.next()) {
-                product = new ProductModel();
-                product.mProductID = rs.getInt("ProductId");
-                product.mName = rs.getString("Name");
-                product.mPrice = rs.getDouble("Price");
-                product.mQuantity = rs.getInt("Quantity");
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return product;
-    }
-
-    @Override
-    public CustomerModel loadCustomer(int id) {
-        CustomerModel customer = null;
-
-        try {
-            String sql = "SELECT * FROM Customer WHERE CustomerId = " + id;
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            if (rs.next()) {
-                customer = new CustomerModel();
-                customer.mCustomerID = id;
-                customer.mName = rs.getString("Name");
-                customer.mPhone = rs.getInt("Phone");
-                customer.mAddress = rs.getString("Address");
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return customer;
-    }
 }

@@ -1,3 +1,5 @@
+
+
 public class TXTReceiptBuilder implements IReceiptBuilder {
 
     StringBuilder sb = new StringBuilder();

@@ -1,25 +1,15 @@
 
 public class ProductModel {
-    public int mProductID, mQuantity;
+    public int mProductID;
     public String mName;
-    public double mPrice;
+    public double mPrice, mQuantity;
 
-
-    public String to_string() {
-        StringBuilder sb = new StringBuilder("Product Details:\n");
-        sb.append("\tProduct ID: ").append(mProductID).append("\n");
-        sb.append("\tProduct Name: ").append(mName).append("\n");
-        sb.append("\tProduct Price: $").append(mPrice).append("\n");
-        sb.append("\tProduct Quantity: ").append(mQuantity).append("\n");
-        return sb.toString();
-    }
-
-    public String insert_into_sql() {
+    public String toString() {
         StringBuilder sb = new StringBuilder("(");
-        sb.append(mProductID).append(", ");
-        sb.append("\"").append(mName).append("\",");
-        sb.append(mPrice).append(", ");
-        sb.append(mQuantity).append(");");
+        sb.append(mProductID).append(",");
+        sb.append("\"").append(mName).append("\"").append(",");
+        sb.append(mPrice).append(",");
+        sb.append(mQuantity).append(")");
         return sb.toString();
     }
 }

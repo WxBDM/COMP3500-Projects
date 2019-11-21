@@ -1,9 +1,9 @@
+
 import javax.swing.*;
 
 public class StoreManager {
-
     public static final String DBMS_SQ_LITE = "SQLite";
-    public static final String DB_FILE = "store.db";
+    public static final String DB_FILE = "/Users/Brandon/IdeaProjects/COMP3500-Projects/swdesign/data/store.db";
 
     IDataAdapter adapter = null;
     private static StoreManager instance = null;
@@ -12,12 +12,11 @@ public class StoreManager {
         if (instance == null) {
 
             String dbfile = DB_FILE;
-            if (dbfile.length() == 0) {
-                JFileChooser fc = new JFileChooser();
-                if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
-                    dbfile = fc.getSelectedFile().getAbsolutePath();
-            }
-            instance = new StoreManager(DBMS_SQ_LITE, dbfile);
+//            JFileChooser fc = new JFileChooser();
+//            if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+//                dbfile = fc.getSelectedFile().getAbsolutePath();
+
+            instance = new StoreManager("Network", "localhost:1024");
         }
         return instance;
     }
@@ -28,8 +27,18 @@ public class StoreManager {
         else
         if (dbms.equals("SQLite"))
             adapter = new SQLiteDataAdapter();
+        else
+        if (dbms.equals("Network"))
+            adapter = new NetworkDataAdapter();
 
-        adapter.connect(dbfile);
+        adapter.connect("localhost:1024");
+        ProductModel product = adapter.loadProduct(3);
+
+        System.out.println("Loaded product: " + product);
+
+        CustomerModel customer = adapter.loadCustomer(3);
+        System.out.println("Loaded customer:" + customer);
+
     }
 
     public IDataAdapter getDataAdapter() {
@@ -40,14 +49,15 @@ public class StoreManager {
         adapter = a;
     }
 
+
     public void run() {
         MainUI ui = new MainUI();
         ui.view.setVisible(true);
     }
 
     public static void main(String[] args) {
+        System.out.println("Hello class!");
         StoreManager.getInstance().run();
     }
 
 }
-

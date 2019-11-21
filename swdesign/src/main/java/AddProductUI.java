@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -50,7 +51,7 @@ public class AddProductUI {
         panelButtons.add(btnCancel);
         view.getContentPane().add(panelButtons);
 
-        btnAdd.addActionListener(new AddButtonListerner());
+        btnAdd.addActionListener(new AddButtonListener());
 
         btnCancel.addActionListener(new ActionListener() {
             @Override
@@ -58,13 +59,14 @@ public class AddProductUI {
                 view.dispose();
             }
         });
+
     }
 
     public void run() {
         view.setVisible(true);
     }
 
-    class AddButtonListerner implements ActionListener {
+    class AddButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -100,24 +102,21 @@ public class AddProductUI {
                 return;
             }
 
-            String quantity = txtQuantity.getText();
+            String quant = txtQuantity.getText();
             try {
-                product.mQuantity = Integer.parseInt(quantity);
+                product.mQuantity = Double.parseDouble(quant);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Quantity is invalid!");
                 return;
             }
 
             switch (StoreManager.getInstance().getDataAdapter().saveProduct(product)) {
-                case SQLiteDataAdapter.PRODUCT_DUPLICATE_ERROR:
-                    JOptionPane.showMessageDialog(null, "Unsuccessfully added product. Duplicate product ID.");
-                    return;
-                case SQLiteDataAdapter.PRODUCT_SAVED_OK:
-                    JOptionPane.showMessageDialog(null, "Product added successfully!\n" + product.to_string());
-                    return;
+                case SQLiteDataAdapter.PRODUCT_SAVE_FAILED:
+                    JOptionPane.showMessageDialog(null, "Product NOT added successfully! Duplicate product ID!");
                 default:
-                    return;
+                    JOptionPane.showMessageDialog(null, "Product added successfully!" + product);
             }
         }
     }
+
 }

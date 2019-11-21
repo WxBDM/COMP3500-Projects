@@ -8,7 +8,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Calendar;
 
-public class AddPurchaseUI {
+public class AddPurchaseUI extends TXTReceiptBuilder {
     public JFrame view;
 
     public JButton btnAdd = new JButton("Add");
@@ -81,14 +81,15 @@ public class AddPurchaseUI {
         txtCustomerID.addFocusListener(new CustomerIDFocusListener());
         txtQuantity.getDocument().addDocumentListener(new QuantityChangeListener());
 
-        btnAdd.addActionListener(new AddButtonListerner());
+        btnAdd.addActionListener(new AddButtonListener());
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 view.dispose();
             }
         });
-    }
+
+    };
 
     public void run() {
         purchase = new PurchaseModel();
@@ -252,7 +253,7 @@ public class AddPurchaseUI {
         }
     }
 
-    class AddButtonListerner implements ActionListener {
+    class AddButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -269,23 +270,18 @@ public class AddPurchaseUI {
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "PurchaseID is invalid!");
                 return;
-
             }
 
 
             switch (StoreManager.getInstance().getDataAdapter().savePurchase(purchase)) {
                 case SQLiteDataAdapter.PURCHASE_DUPLICATE_ERROR:
                     JOptionPane.showMessageDialog(null, "Purchase NOT added successfully! Duplicate product ID!");
-                    return;
-                case SQLiteDataAdapter.PURCHASE_SAVED_OK:
+                default:
                     TXTReceiptBuilder sb = new TXTReceiptBuilder();
                     sb.appendHeader("Thank you for your purchase! Here is your receipt:");
                     sb.appendPurchase(purchase);
                     System.out.println(sb.to_string());
-                    JOptionPane.showMessageDialog(null, "Purchase added successfully!\n" + purchase.to_string());
-                    return;
-                default:
-                    return;
+                    JOptionPane.showMessageDialog(null, "Purchase added successfully!" + purchase);
             }
         }
     }
