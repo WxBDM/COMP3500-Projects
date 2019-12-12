@@ -1,5 +1,11 @@
 public class MessageModel {
 
+    public static final int LOGIN = 0;
+    public static final int LOGOUT = 1;
+
+    public static final int GET_USER = 10;
+    public static final int PUT_USER = 11;
+
     public static final int GET_PRODUCT = 100;
     public static final int PUT_PRODUCT = 101;
 
@@ -9,11 +15,17 @@ public class MessageModel {
     public static final int GET_PURCHASE = 300;
     public static final int PUT_PURCHASE = 301;
 
+    public static final int GET_PURCHASE_LIST = 500;
+
+
+    public static final int GET_PRODUCT_LIST = 600;
+
 
     public static final int OPERATION_OK = 1000; // server responses!
     public static final int OPERATION_FAILED = 1001;
 
     public int code;
+    public int ssid;
     public String data;
 
     public MessageModel() {
@@ -25,4 +37,10 @@ public class MessageModel {
         this.code = code;
         this.data = data;
     }
+    public MessageModel(int code, int ssid, String data) {
+        this.code = code;
+        this.ssid = code;
+        this.data = data;
+    }
 }
+

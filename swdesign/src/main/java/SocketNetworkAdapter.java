@@ -5,8 +5,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class SocketNetworkAdapter implements INetworkAdapter {
-    @Override
-    public String send(String msg, String host, int port) throws Exception {
+
+    public String exchange(String msg, String host, int port) throws Exception {
         Socket link = new Socket(host, port);
         Scanner input = new Scanner(link.getInputStream());
         PrintWriter output = new PrintWriter(link.getOutputStream(), true);
@@ -21,9 +21,11 @@ public class SocketNetworkAdapter implements INetworkAdapter {
         return msg;
     }
 
-    @Override
-    public MessageModel send(MessageModel msg, String host, int port) throws Exception {
+
+    public MessageModel exchange(MessageModel msg, String host, int port) throws Exception {
+        System.out.println( "" );
         Gson gson = new Gson();
-        return gson.fromJson(send(gson.toJson(msg), host, port), MessageModel.class);
+        return gson.fromJson(exchange(gson.toJson(msg), host, port), MessageModel.class);
+
     }
 }

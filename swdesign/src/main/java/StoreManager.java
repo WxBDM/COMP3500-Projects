@@ -1,62 +1,64 @@
-
 import javax.swing.*;
 
 public class StoreManager {
-    public static final String DBMS_SQ_LITE = "SQLite";
-    public static final String DB_FILE = "/Users/Brandon/IdeaProjects/COMP3500-Projects/swdesign/data/store.db";
+    public static String dbms = "Network";
+    public static String path = "localhost:1024";
 
-    IDataAdapter adapter = null;
+    IDataAdapter dataAdapter = null;
     private static StoreManager instance = null;
 
     public static StoreManager getInstance() {
         if (instance == null) {
-
-            String dbfile = DB_FILE;
-//            JFileChooser fc = new JFileChooser();
-//            if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
-//                dbfile = fc.getSelectedFile().getAbsolutePath();
-
-            instance = new StoreManager("Network", "localhost:1024");
+            instance = new StoreManager(dbms, path);
         }
         return instance;
     }
 
     private StoreManager(String dbms, String dbfile) {
-        if (dbms.equals("Oracle"))
-            adapter = new OracleDataAdapter();
-        else
         if (dbms.equals("SQLite"))
-            adapter = new SQLiteDataAdapter();
+            dataAdapter = new SQLiteDataAdapter();
         else
         if (dbms.equals("Network"))
-            adapter = new NetworkDataAdapter();
+            dataAdapter = new NetworkDataAdapter();
 
-        adapter.connect("localhost:1024");
-        ProductModel product = adapter.loadProduct(3);
-
-        System.out.println("Loaded product: " + product);
-
-        CustomerModel customer = adapter.loadCustomer(3);
-        System.out.println("Loaded customer:" + customer);
+        dataAdapter.connect(dbfile);
 
     }
 
     public IDataAdapter getDataAdapter() {
-        return adapter;
+        return dataAdapter;
     }
 
     public void setDataAdapter(IDataAdapter a) {
-        adapter = a;
+        dataAdapter = a;
     }
 
 
     public void run() {
-        MainUI ui = new MainUI();
-        ui.view.setVisible(true);
+
+        LoginUI ui = new LoginUI();
+        ui.view.setVisible( true );
+
+
+
     }
 
     public static void main(String[] args) {
         System.out.println("Hello class!");
+        if (args.length > 0) { // having runtime arguments
+            dbms = args[0];
+            if (args.length == 1) { // do not have 2nd arguments for dbfile
+                if (dbms.equals("SQL")) {
+                    JFileChooser fc = new JFileChooser();
+                    if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+                        path = fc.getSelectedFile().getAbsolutePath();
+                }
+                else
+                    path = JOptionPane.showInputDialog("Enter address of database server as host:port");
+            }
+            else
+                path = args[1];
+        }
         StoreManager.getInstance().run();
     }
 

@@ -8,7 +8,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Calendar;
 
-public class AddPurchaseUI extends TXTReceiptBuilder {
+public class AddPurchaseUI {
     public JFrame view;
 
     public JButton btnAdd = new JButton("Add");
@@ -81,15 +81,8 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
         txtCustomerID.addFocusListener(new CustomerIDFocusListener());
         txtQuantity.getDocument().addDocumentListener(new QuantityChangeListener());
 
-        btnAdd.addActionListener(new AddButtonListener());
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                view.dispose();
-            }
-        });
-
-    };
+        btnAdd.addActionListener(new AddButtonListerner());
+    }
 
     public void run() {
         purchase = new PurchaseModel();
@@ -99,12 +92,12 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
     }
 
     private class ProductIDFocusListener implements FocusListener {
-        @Override
+
         public void focusGained(FocusEvent focusEvent) {
 
         }
 
-        @Override
+
         public void focusLost(FocusEvent focusEvent) {
             process();
         }
@@ -149,12 +142,11 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
     }
 
     private class CustomerIDFocusListener implements FocusListener {
-        @Override
+
         public void focusGained(FocusEvent focusEvent) {
 
         }
 
-        @Override
         public void focusLost(FocusEvent focusEvent) {
             process();
         }
@@ -190,7 +182,7 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
                 return;
             }
 
-            labCustomerName.setText("Product Name: " + customer.mName);
+            labCustomerName.setText("Product Name: " + customer.mNCame);
 
         }
 
@@ -213,7 +205,6 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
             String s = txtQuantity.getText();
 
             if (s.length() == 0) {
-                //labCustomerName.setText("Customer Name: [not specified!]");
                 return;
             }
 
@@ -253,9 +244,9 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
         }
     }
 
-    class AddButtonListener implements ActionListener {
+    class AddButtonListerner implements ActionListener {
 
-        @Override
+        
         public void actionPerformed(ActionEvent actionEvent) {
 
             String id = txtPurchaseID.getText();
@@ -272,18 +263,15 @@ public class AddPurchaseUI extends TXTReceiptBuilder {
                 return;
             }
 
-
-            switch (StoreManager.getInstance().getDataAdapter().savePurchase(purchase)) {
-                case SQLiteDataAdapter.PURCHASE_DUPLICATE_ERROR:
-                    JOptionPane.showMessageDialog(null, "Purchase NOT added successfully! Duplicate product ID!");
-                default:
-                    TXTReceiptBuilder sb = new TXTReceiptBuilder();
-                    sb.appendHeader("Thank you for your purchase! Here is your receipt:");
-                    sb.appendPurchase(purchase);
-                    System.out.println(sb.to_string());
-                    JOptionPane.showMessageDialog(null, "Purchase added successfully!" + purchase);
+            if(StoreManager.getInstance().getDataAdapter().savePurchase(purchase) == SQLiteDataAdapter.PURCHASE_DUPLICATE_ERROR) {
+                JOptionPane.showMessageDialog(null, "Purchase NOT added successfully! Duplicate purchase ID!");}
+             else{
+                JOptionPane.showMessageDialog(null, "Purchase added successfully!" + purchase);}
             }
+
+
+
         }
     }
 
-}
+

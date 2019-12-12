@@ -1,5 +1,3 @@
-import com.google.gson.Gson;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,11 +10,12 @@ public class ManageProductUI {
     public JButton btnLoad = new JButton("Load Product");
     public JButton btnSave = new JButton("Save Product");
 
+
     public JTextField txtProductID = new JTextField(20);
+    public JTextField txtSupplier = new JTextField(20);
     public JTextField txtName = new JTextField(20);
     public JTextField txtPrice = new JTextField(20);
     public JTextField txtQuantity = new JTextField(20);
-
 
     public ManageProductUI() {
         this.view = new JFrame();
@@ -33,24 +32,30 @@ public class ManageProductUI {
         view.getContentPane().add(panelButtons);
 
         JPanel line1 = new JPanel(new FlowLayout());
-        line1.add(new JLabel("ProductID "));
+        line1.add(new JLabel("ProductID"));
         line1.add(txtProductID);
         view.getContentPane().add(line1);
 
         JPanel line2 = new JPanel(new FlowLayout());
-        line2.add(new JLabel("Name "));
-        line2.add(txtName);
+        line2.add(new JLabel("supplier"));
+        line2.add(txtSupplier);
         view.getContentPane().add(line2);
 
         JPanel line3 = new JPanel(new FlowLayout());
-        line3.add(new JLabel("Price "));
-        line3.add(txtPrice);
+        line3.add(new JLabel("Name"));
+        line3.add(txtName);
         view.getContentPane().add(line3);
 
         JPanel line4 = new JPanel(new FlowLayout());
-        line4.add(new JLabel("Quantity "));
-        line4.add(txtQuantity);
+        line4.add(new JLabel("Price"));
+        line4.add(txtPrice);
         view.getContentPane().add(line4);
+
+        JPanel line5 = new JPanel(new FlowLayout());
+        line5.add(new JLabel("Quantity"));
+        line5.add(txtQuantity);
+        view.getContentPane().add(line5);
+
 
 
         btnLoad.addActionListener(new LoadButtonListerner());
@@ -65,7 +70,7 @@ public class ManageProductUI {
 
     class LoadButtonListerner implements ActionListener {
 
-        @Override
+
         public void actionPerformed(ActionEvent actionEvent) {
             ProductModel product = new ProductModel();
             String id = txtProductID.getText();
@@ -89,6 +94,7 @@ public class ManageProductUI {
             if (product == null) {
                 JOptionPane.showMessageDialog(null, "Product NOT exists!");
             } else {
+                txtSupplier.setText(product.mVendor);
                 txtName.setText(product.mName);
                 txtPrice.setText(Double.toString(product.mPrice));
                 txtQuantity.setText(Double.toString(product.mQuantity));
@@ -97,7 +103,7 @@ public class ManageProductUI {
     }
 
     class SaveButtonListener implements ActionListener {
-        @Override
+
         public void actionPerformed(ActionEvent actionEvent) {
             ProductModel product = new ProductModel();
             String id = txtProductID.getText();
@@ -113,6 +119,14 @@ public class ManageProductUI {
                 JOptionPane.showMessageDialog(null, "ProductID is invalid!");
                 return;
             }
+
+
+            String supplier = txtSupplier.getText();
+            if (supplier.length() == 0) {
+                JOptionPane.showMessageDialog(null, "supplier name cannot be empty!");
+                return;
+            }
+            product.mVendor = supplier;
 
             String name = txtName.getText();
             if (name.length() == 0) {
@@ -141,10 +155,11 @@ public class ManageProductUI {
 
             int  res = StoreManager.getInstance().getDataAdapter().saveProduct(product);
 
-            if (res == IDataAdapter.PRODUCT_SAVE_FAILED)
+            if (res == IDataAdapter.PRODUCT_DUPLICATE_ERROR)
                 JOptionPane.showMessageDialog(null, "Product is NOT saved successfully!");
             else
                 JOptionPane.showMessageDialog(null, "Product is SAVED successfully!");
         }
     }
 }
+

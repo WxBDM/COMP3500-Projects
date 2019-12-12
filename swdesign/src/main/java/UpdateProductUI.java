@@ -15,8 +15,11 @@ public class UpdateProductUI {
 
     public JTextField txtProductID = new JTextField(20);
     public JTextField txtName = new JTextField(20);
-    public JTextField txtPrice = new JTextField(20);
+    public JTextField txtVendor = new JTextField( 20 );
     public JTextField txtQuantity = new JTextField(20);
+    public JTextField txtPrice = new JTextField(20);
+
+
 
 
     public UpdateProductUI() {
@@ -39,22 +42,27 @@ public class UpdateProductUI {
         view.getContentPane().add(line1);
 
         JPanel line2 = new JPanel(new FlowLayout());
-        line2.add(new JLabel("Name "));
+        line2.add(new JLabel("Supplier"));
         line2.add(txtName);
         view.getContentPane().add(line2);
 
         JPanel line3 = new JPanel(new FlowLayout());
-        line3.add(new JLabel("Price "));
-        line3.add(txtPrice);
+        line3.add(new JLabel("Name"));
+        line3.add(txtVendor);
         view.getContentPane().add(line3);
 
         JPanel line4 = new JPanel(new FlowLayout());
-        line4.add(new JLabel("Quantity "));
-        line4.add(txtQuantity);
+        line4.add(new JLabel("Price"));
+        line4.add(txtPrice);
         view.getContentPane().add(line4);
 
+        JPanel line5 = new JPanel(new FlowLayout());
+        line5.add(new JLabel("Quantity"));
+        line5.add(txtQuantity);
+        view.getContentPane().add(line5);
 
-        btnLoad.addActionListener(new LoadButtonListener());
+
+        btnLoad.addActionListener(new LoadButtonListerner());
 
         btnSave.addActionListener(new SaveButtonListener());
 
@@ -64,9 +72,9 @@ public class UpdateProductUI {
         view.setVisible(true);
     }
 
-    class LoadButtonListener implements ActionListener {
+    class LoadButtonListerner implements ActionListener {
 
-        @Override
+
         public void actionPerformed(ActionEvent actionEvent) {
             ProductModel product = new ProductModel();
             String id = txtProductID.getText();
@@ -102,11 +110,24 @@ public class UpdateProductUI {
 
                 txtName.setText(product.mName);
 
-                product.mPrice = input.nextDouble();
+                product.mVendor = input.nextLine();
+
+                if (product.mVendor.equals("null")) {
+                    JOptionPane.showMessageDialog(null, "Product NOT exists!");
+                    return;
+                }
+
+                txtVendor.setText(product.mVendor);
+
+
+                String st = input.nextLine();
+                product.mPrice = Double.parseDouble( st );
                 txtPrice.setText(Double.toString(product.mPrice));
 
-                product.mQuantity = input.nextDouble();
+                String stt = input.nextLine();
+                product.mQuantity = Double.parseDouble( stt );
                 txtQuantity.setText(Double.toString(product.mQuantity));
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -116,7 +137,7 @@ public class UpdateProductUI {
     }
 
     class SaveButtonListener implements ActionListener {
-        @Override
+
         public void actionPerformed(ActionEvent actionEvent) {
             ProductModel product = new ProductModel();
             String id = txtProductID.getText();
@@ -141,6 +162,15 @@ public class UpdateProductUI {
 
             product.mName = name;
 
+
+            String Vendor = txtVendor.getText();
+            if (name.length() == 0) {
+                JOptionPane.showMessageDialog(null, "Supplier name cannot be empty!");
+                return;
+            }
+
+            product.mVendor = Vendor;
+
             String price = txtPrice.getText();
             try {
                 product.mPrice = Double.parseDouble(price);
@@ -157,7 +187,7 @@ public class UpdateProductUI {
                 return;
             }
 
-            // all product info is ready! Send to Server!
+            // all product infor is ready! Send to Server!
 
             try {
                 Socket link = new Socket("localhost", 1024);
@@ -169,6 +199,8 @@ public class UpdateProductUI {
                 output.println(product.mName);
                 output.println(product.mPrice);
                 output.println(product.mQuantity);
+                output.println(product.mVendor);
+                JOptionPane.showMessageDialog( null, "saved with new information - confirmed" );
 
             } catch (Exception e) {
                 e.printStackTrace();
